@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.wf.ew.system.dao.LoginRecordMapper">
+<mapper namespace="com.hc.hyh.system.dao.LoginRecordMapper">
 
-    <select id="listFull" resultType="com.wf.ew.system.model.LoginRecord">
+    <select id="listFull" resultType="com.hc.hyh.system.model.LoginRecord">
         SELECT a.*,b.nick_name,b.username
         FROM sys_login_record a
         left join sys_user b on a.user_id=b.user_id

@@ -295,7 +295,7 @@ layui.define(['layer'], function (exports) {
     $('body').on('mouseenter', '*[lay-tips]', function () {
         var tipText = $(this).attr('lay-tips');
         var dt = $(this).attr('lay-direction');
-        layer.tips(tipText, this, {tips: dt || 1, time: -1});
+        layer.tips("<span style='color:#f2f2f2'>"+tipText+"</span>", this, {tips: [2,dt] , time: -1 , area: ['auto','auto']});
     }).on('mouseleave', '*[lay-tips]', function () {
         layer.closeAll('tips');
     });

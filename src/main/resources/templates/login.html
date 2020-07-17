@@ -18,7 +18,7 @@
 <div class="login-wrapper">
 
     <div class="login-header">
-        <img src="assets/images/logo.png"> EasyWeb
+        <img src="assets/images/logo.png"> 华测后台管理系统
     </div>
 
     <div class=" login-body">
@@ -62,23 +62,12 @@
                 <div class="layui-form-item">
                     <button lay-filter="login-submit" class="layui-btn layui-btn-fluid" lay-submit>登 录</button>
                 </div>
-                <div class="layui-form-item login-other">
-                    <label>第三方登录</label>
-                    <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
-                    <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
-                    <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
-                </div>
             </form>
         </div>
     </div>
 
     <div class="login-footer">
-        <p>© 2018 <a href="javascript:;" target="_blank">EasyWeb版权所有</a></p>
-        <p>
-            <span><a href="https://github.com/whvcse/EasyWeb" target="_blank">前往github</a></span>
-            <span><a href="https://gitee.com/whvse/EasyWeb" target="_blank">前往gitee</a></span>
-            <span><a href="javascript:;" target="_blank">文档说明</a></span>
-        </p>
+        <% include("./layout/footer.html"){} %>
     </div>
 </div>
 

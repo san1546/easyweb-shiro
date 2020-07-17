@@ -60,7 +60,7 @@ mvvm框架 | [pandyle.js](https://gitee.com/pandarrr/pandyle) (专为jquery编�
 |-src
    |-main
       |-java
-      |    |-com.wf.ew
+      |    |-com.hc.hyh
       |              |-common     // 核心模块
       |              |     |-config      // 存放SpringBoot配置类
       |              |     |     |-MyBatisPlusConfig.java      // MyBatisPlus配置
@@ -101,8 +101,8 @@ controller、dao、model、service、service.impl等包，然后再resource/mapp
 建一个模块文件夹，里面放mapper的xml文件。
 
 - `mapper.xml` 扫描路径是`classpath:mapper/**/*Mapper.xml`
-- `druid` 的service扫描路径是 `com.wf.ew.*.service.*`
-- `mapper` 的扫描路径是 `com.wf.ew.*.dao` ，<br>
+- `druid` 的service扫描路径是 `com.hc.hyh.*.service.*`
+- `mapper` 的扫描路径是 `com.hc.hyh.*.dao` ，<br>
    位于 `common/config/MybatisPlusConfig.java`
 
 
