@@ -1,0 +1,126 @@
+.html{
+    background-color: #FFFFFF;
+}
+.layui-layout{
+    /*margin-left:10%;*/
+    height:100px!important;
+}
+h1{
+    min-width: 300px;
+}
+@media screen and (max-width: 1200px) {
+    .layui-card-body {
+        margin: 50px;
+    }
+}
+@media screen and (min-width: 1201px) {
+    .layui-hr {
+        margin: 3% 10% 3% 10%;
+        height: 3px;
+    }
+}
+@media screen and (max-width: 1200px) {
+    .layui-hr {
+        margin: 30px 140px 30px 140px;
+        height: 3px;
+    }
+}
+@media screen and (min-width: 1201px) {
+    .achieve-form-div {
+        width: 40%;
+        text-align: center;
+        margin-left: 30%;
+    }
+}
+@media screen and (max-width: 1200px) and (min-width: 601px){
+    .achieve-form-div {
+        min-width: 300px;
+        max-width: 500px;
+        margin-left: 20%;
+        text-align: center;
+    }
+}
+@media screen and (max-width: 600px) {
+    .achieve-form-div {
+        min-width: 300px;
+        max-width: 500px;
+        margin-left: 10%;
+        text-align: center;
+    }
+}
+.layui-input-block > input{
+    border-radius: 8px;
+    min-width: 200px;
+}
+.layui-form-item{
+    text-align: center;
+}
+.layui-form-item .model-form-footer{
+    text-align: center;
+    margin-top: 10%;
+    min-width: 200px;
+}
+@media screen and (min-width: 601px){
+    .layui-btn .layui-btn-radius .layui-btn-lg {
+        margin-right: 10%;
+    }
+}
+@media screen and (max-width: 600px){
+    .layui-btn .layui-btn-radius .layui-btn-lg{
+        margin-right: 2px;
+    }
+}
+
+@media screen and (min-width: 601px){
+    .layui-footer {
+        position: fixed;
+        bottom: 0;
+        text-align: center;
+        width: 100%;
+        background-color: #8b0015;
+        border-top-width: medium;
+        height:80px;
+        opacity: 0.8;
+    }
+}
+@media screen and (min-width: 601px){
+    .layui-footer {
+        position: fixed;
+        bottom: 0;
+        text-align: center;
+        width: 100%;
+        background-color: #8b0015;
+        border-top-width: medium;
+        height:80px;
+        opacity: 0.8;
+    }
+}
+
+.layui-footer-text{
+    /*margin:1% 25% 1% 25%;*/
+    top: 37px;
+    left: 0;
+    height: 60px;
+    text-align: center;
+    line-height: 180%;
+    color:#FFFFFF;
+}
+
+
+.layui-footer-text > a{
+    /*margin:1% 25% 1% 25%;*/
+    color:#FFFFFF;
+}
+
+.layui-bg-hw{
+    background-color: #8b0015!important;
+    color: #FFFFFF;
+    font-size: 18px;
+}
+
+.layui-img{
+    position: relative;
+    height:100%;
+    /*border-bottom: #8b0015 solid 3px!important;*/
+    padding:0!important;
+}

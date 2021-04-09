@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by Administrator on 2018-07-13 上午 11:21.
  */
-@Controller()
+@Controller
 @RequestMapping("/home")
 public class HomeController {
 

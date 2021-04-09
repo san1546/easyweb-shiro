@@ -38,8 +38,19 @@ public class MainController extends BaseController implements ErrorController {
     /**
      * 主页
      */
-    @RequestMapping({"/", "/index"})
+    @RequestMapping("/")
     public String index(Model model) {
+        List<Authorities> authorities = authoritiesService.listByUserId(getLoginUserId());
+        List<Map<String, Object>> menuTree = getMenuTree(authorities, -1);
+        model.addAttribute("menus", menuTree);
+        model.addAttribute("login_user", getLoginUser());
+        return "achievement/achievement.html";
+    }
+    /**
+     * 后台管理首页
+     */
+    @RequestMapping("/index")
+    public String back_index(Model model) {
         List<Authorities> authorities = authoritiesService.listByUserId(getLoginUserId());
         List<Map<String, Object>> menuTree = getMenuTree(authorities, -1);
         model.addAttribute("menus", menuTree);

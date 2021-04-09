@@ -1,0 +1,232 @@
+<div class="layui-card">
+    <div class="layui-card-header">
+        <h2 class="header-title">试卷管理</h2>
+        <span class="layui-breadcrumb pull-right">
+          <a href="#!home_console">首页</a>
+          <a><cite>试卷管理</cite></a>
+        </span>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-form toolbar">
+            搜索：
+            <select id="data-search-key">
+                <option value="">-请选择-</option>
+                <option value="testno">卷号</option>
+                <option value="student_name">姓名</option>
+                <option value="part">试题部分</option>
+            </select>&emsp;
+            <input id="data-search-value" class="layui-input search-input" type="text" placeholder="输入关键字"/>&emsp;
+            <button id="data-btn-search" class="layui-btn layui-btn-normal layui-btn-radius"><i class="layui-icon">&#xe615;</i>搜索</button>
+            <button id="data-btn-add" class="layui-btn icon-btn layui-btn-radius"
+                    lay-tips="可以导入学生信息表(必须以_student.xlsx结尾)<br/>
+                    学生成绩表(必须以_score.xlsx结尾)<br/>
+                    标准答案表(必须以_test.xlsx结尾)"
+                    lay-direction="#f99501" type="button">
+                <i class="layui-icon">&#xe654;</i>数据导入
+            </button>
+            <button id="data-btn-sum" class="layui-btn icon-btn layui-btn-radius"
+                    lay-tips="对比标准答案表和学生答案表，计算学生每题成绩，每部分成绩，总分"
+                    lay-direction="#f99501" type="button">
+                <i class="layui-icon">&#xe654;</i>分数统计
+            </button>
+            <button id="data-btn-total" class="layui-btn icon-btn layui-btn-radius"
+                    lay-tips="计算答对平均分，答错平均分，答对百分比，答错百分比，百分比乘积开方，总分标准差，点双列，难度"
+                    lay-direction="#f99501" type="button">
+                <i class="layui-icon">&#xe654;</i>数据统计
+            </button>
+            <button id="data-btn-upload" class="layui-btn icon-btn layui-btn-radius"
+                    lay-tips="
+                    学生成绩表(必须以_score.xlsx结尾)<br/>
+                    请输入多少个小题为一个大题
+                    "
+                    lay-direction="#f99501" type="button">
+                <i class="layui-icon">&#xe654;</i>成绩导入
+            </button>
+        </div>
+
+        <table class="layui-table" id="data-table" lay-filter="data-table"></table>
+    </div>
+</div>
+
+<!-- 表格操作列 -->
+<script type="text/html" id="data-table-bar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-xs" lay-event="reset">重置密码</a>
+</script>
+
+<!-- 表格状态列 -->
+<script type="text/html" id="data-tpl-state">
+    <input type="checkbox" lay-filter="data-tpl-state" value="{{d.dataId}}" lay-skin="switch" lay-text="正常|锁定"
+           {{d.state==0?'checked':''}}/>
+</script>
+
+<script>
+    layui.use(['form', 'table', 'util', 'admin', 'element','upload'], function () {
+        var form = layui.form;
+        var table = layui.table;
+        var layer = layui.layer;
+        var util = layui.util;
+        var admin = layui.admin;
+        var element = layui.element;
+        var upload = layui.upload;
+
+        form.render('select');
+
+        // 渲染表格
+        table.render({
+             elem: '#data-table'
+            ,url: 'system/data/list'
+            ,page: true
+            ,cols: [[
+                {type: 'numbers'},
+                {field: 'testno', sort: true, title: '卷号'},
+                {field: 'studentName', sort: true, title: '姓名'},
+                {field: 'part', sort: true, title: '第几部分'},
+                {field: 'partNum', sort: true, title: '该部分题目总数'},
+                {field: 'answer', sort: true, title: '答案'},
+                {field: 'partScore', sort: true, title: '该部分总分'}
+            ]]
+        });
+
+
+
+        // 添加按钮点击事件
+        $('#data-btn-add').click(function () {
+            showEditModel();
+        });
+
+        // 添加按钮点击事件
+        $('#data-btn-sum').click(function () {
+            showSumModel();
+        });
+        // 添加按钮点击事件
+        $('#data-btn-total').click(function () {
+            showTotalModel();
+        });
+        // 添加按钮点击事件
+        $('#data-btn-upload').click(function () {
+            showUploadModel();
+        });
+        // // 渲染上传控件
+        // var uploadInst = upload.render({
+        //     elem: '#data-btn-upload' //绑定元素
+        //     ,url: 'system/data/upload/' //上传接口
+        //     ,done: function(res){
+        //         //上传完毕回调
+        //     }
+        //     ,error: function(){
+        //         //请求异常回调
+        //     }
+        //     ,accept:'file'
+        //
+        // });
+
+        // 工具条点击事件
+        table.on('tool(data-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'edit') { // 修改
+                showEditModel(data);
+            } else if (layEvent === 'reset') { // 重置密码
+                layer.confirm('确定重置此用户的密码吗？', function (i) {
+                    layer.close(i);
+                    layer.load(2);
+                    $.post('system/data/restPsw', {
+                        dataId: obj.data.dataId
+                    }, function (data) {
+                        layer.closeAll('loading');
+                        if (data.code == 200) {
+                            layer.msg(data.msg, {icon: 1});
+                        } else {
+                            layer.msg(data.msg, {icon: 2});
+                        }
+                    });
+                });
+            }
+        });
+
+        // 显示表单弹窗
+        var showEditModel = function (data) {
+            var title = data ? '修改数据' : '数据导入';
+            admin.putTempData('t_data', data);
+            admin.popupCenter({
+                area: ['40%','60%'],
+                title: title,
+                path: 'system/data/editForm',
+                finish: function () {
+                    table.reload('data-table', {});
+                }
+            });
+        };
+
+
+        // 显示表单弹窗
+        var showSumModel = function (data) {
+            var title = data ? '更新数据' : '统计数据';
+            admin.putTempData('t_data', data);
+            admin.popupCenter({
+                area: ['20%','20%'],
+                title: title,
+                path: 'system/data/sumForm',
+                finish: function () {
+                    table.reload('data-table', {});
+                }
+            });
+        };
+
+        // 显示表单弹窗
+        var showTotalModel = function (data) {
+            var title = data ? '更新数据' : '统计数据';
+            admin.putTempData('t_data', data);
+            admin.popupCenter({
+                area: ['40%','60%'],
+                title: title,
+                path: 'system/data/totalForm',
+                finish: function () {
+                    table.reload('data-table', {});
+                }
+            });
+        };
+
+        // 显示表单弹窗
+        var showUploadModel = function (data) {
+            var title = data ? '修改数据' : '数据导入';
+            admin.putTempData('t_data', data);
+            admin.popupCenter({
+                area: ['40%','60%'],
+                title: title,
+                path: 'system/data/uploadForm',
+                finish: function () {
+                    table.reload('data-table', {});
+                }
+            });
+        };
+
+        // 搜索按钮点击事件
+        $('#data-btn-search').click(function () {
+            var key = $('#data-search-key').val();
+            var value = $('#data-search-value').val();
+            table.reload('data-table', {where: {searchKey: key, searchValue: value}});
+        });
+
+        // 修改data状态
+        form.on('switch(data-tpl-state)', function (obj) {
+            layer.load(2);
+            $.post('system/data/updateState', {
+                dataId: obj.elem.value,
+                state: obj.elem.checked ? 0 : 1
+            }, function (data) {
+                layer.closeAll('loading');
+                if (data.code == 200) {
+                    layer.msg(data.msg, {icon: 1});
+                    //table.reload('table-data', {});
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            });
+        });
+    });
+</script>

@@ -38,10 +38,11 @@ public class ShiroConfig {
         filterChainDefinitions.put("/druid/**", "anon");
         filterChainDefinitions.put("/login", "anon");
         filterChainDefinitions.put("/achievement/**", "anon");
+        filterChainDefinitions.put("/robots.txt", "anon");
         filterChainDefinitions.put("/totalpdf/**", "anon");
         filterChainDefinitions.put("/files/**", "anon");
         filterChainDefinitions.put("/logout", "logout");
-//        filterChainDefinitions.put("/**", "anon");
+        filterChainDefinitions.put("/", "anon");
         filterChainDefinitions.put("/**", "myLoginFilter,authc");
         shiroFilter.setFilterChainDefinitionMap(filterChainDefinitions);
         return shiroFilter;

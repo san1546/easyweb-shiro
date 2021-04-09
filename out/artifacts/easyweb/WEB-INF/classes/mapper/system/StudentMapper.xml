@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.hyh.system.dao.StudentMapper">
+
+    <select id="getName" resultType="com.hc.hyh.system.model.StudentInfo">
+        select * from student_info where student_name=#{studentName} and testno=#{testno}
+    </select>
+
+    <select id="getTestNo" resultType="com.hc.hyh.system.model.StudentInfo">
+        select * from student_info where testno=#{testno}
+    </select>
+
+    <select id="getCount"   resultType="Integer" >
+        select count(*) from student_info where  testno=#{testno}
+    </select>
+
+    <insert id="insertDetailBatch" parameterType="list">
+        insert into student_info
+        (flag,student_no,student_name,classial,evaluate,school,idno,grade,testno,birthday)
+        values
+        <foreach collection="list" item="dept" index="index" separator=",">
+            (#{dept.flag,jdbcType=VARCHAR},#{dept.studentNo,jdbcType=VARCHAR}, #{dept.studentName,jdbcType=VARCHAR}
+            ,#{dept.classial,jdbcType=VARCHAR},#{dept.evaluate,jdbcType=VARCHAR}
+            ,#{dept.school,jdbcType=VARCHAR},#{dept.idno,jdbcType=VARCHAR}
+            ,#{dept.grade,jdbcType=VARCHAR},#{dept.testno,jdbcType=VARCHAR},#{dept.birthday,jdbcType=VARCHAR}
+           )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        flag = values(flag),
+        student_no = values(student_no),
+        student_name = values(student_name),
+        classial = values(classial),
+        evaluate = values(evaluate),
+        school = values(school),
+        idno = values(idno),
+        grade = values(grade),
+        testno = values(testno),
+        birthday = values(birthday)
+    </insert>
+
+
+
+    <update id="updateDetailBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update student_info
+            <set>
+                flag = #{item.flag},
+                student_no = #{item.student_no},
+                student_name = #{item.studentName},
+                classial = #{item.classial},
+                evaluate = #{item.evaluate},
+                school = #{item.school},
+                idno = #{item.idno},
+                grade = #{item.grade},
+                testno = #{item.testno},
+                birthday = #{item.birthday},
+            </set>
+            where
+            flag = #{item.flag}
+        </foreach>
+    </update>
+</mapper>

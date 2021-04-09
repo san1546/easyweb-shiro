@@ -1,0 +1,72 @@
+<!-- user表单弹窗 -->
+<form id="user-form" lay-filter="user-form" class="layui-form model-form">
+    <input name="userId" type="hidden"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">试卷号</label>
+        <div class="layui-input-block">
+            <input name="testno" placeholder="请输入试卷号" type="text" class="layui-input" maxlength="20"
+                   lay-verify="required" required/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">请选择要统计的功能</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="correctPercentage" title="答对百分比" checked="">
+            <input type="checkbox" name="errorPercentage" title="答错百分比" checked="">
+            <input type="checkbox" name="percentageProductSquare" title="百分比乘积开方" checked="">
+            <input type="checkbox" name="totalStandardDeviation" title="总分标准差" checked="">
+            <input type="checkbox" name="pointBiserial" title="点双列" checked="">
+            <input type="checkbox" name="difficulty" title="难度" checked="">
+        </div>
+
+
+    </div>
+    <div class="layui-form-item model-form-footer">
+        <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
+        <button class="layui-btn" lay-filter="user-form-submit" lay-submit>提交</button>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'admin', 'form', 'formSelects'], function () {
+        var tanchu;
+        var layer = layui.layer;
+        var admin = layui.admin;
+        var form = layui.form;
+        form.render();
+
+        var url = 'system/data/total';
+
+        //表单赋值
+        layui.$('#LAY-component-form-setval').on('click', function(){
+            form.val('example', {
+                "username": "贤心" // "name": "value"
+                ,"password": "123456"
+                ,"interest": 1
+                ,"like[write]": true //复选框选中状态
+                ,"close": true //开关状态
+                ,"sex": "女"
+                ,"desc": "我爱 layui"
+            });
+        });
+
+        // 表单提交事件
+        form.on('submit(user-form-submit)', function (data) {
+            tanchu = top.layer.msg('正在统计，请勿进行其他操作...',{
+                icon: 16,
+                shade: 0.8,
+                time: 0
+            });
+            $.post(url, data.field, function (data) {
+                parent.layer.close(tanchu);
+                if (data.code == 200) {
+                    layer.msg(data.msg, {icon: 1});
+                    admin.finishPopupCenter();
+                } else {
+                    layer.msg(data.msg, {icon: 2});
+                }
+            });
+            return false;
+        });
+    });
+</script>

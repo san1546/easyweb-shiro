@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" class="html">
+<head>
+    <meta charset="UTF-8">
+    <title>华文水平测试首页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="${ctxPath }/assets/css/achieve.css"/>
+    <link rel="stylesheet" href="${ctxPath }/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="${ctxPath }/assets/libs/zTree/css/zTreeStyle/zTreeStyle.css"/>
+    <link rel="stylesheet" href="${ctxPath }/module/formSelects/formSelects-v4.css"/>
+    <link rel="stylesheet" href="${ctxPath }/assets/css/admin.css"/>
+    <% if(null!=session.theme){ %>
+    <link rel="stylesheet" href="${ctxPath }/assets/css/theme-${session.theme}.css"/> <!-- 使用EasyWeb主题生成器生成的主题 -->
+    <% } %>
+</head>
+<body>
+<div class="layui-layout">
+    <% include("../layout/nav_header.html"){} %>
+
+    <div class="layui-container">
+        <div class="layui-carousel" id="layui-carousel" style="width:100%;heigth:324px;">
+            <div carousel-item>
+                <div><img src="${ctxPath }/assets/images/carouse1.jpg" class="pic" style="width: 100%;height: auto"/></div>
+                <div><img src="${ctxPath }/assets/images/carouse3.jpg" class="pic" style="width: 100%;height: auto"/></div>
+            </div>
+        </div>
+    </div>
+    <!-- 条目中可以是任意内容，如：<img src=""> -->
+</div>
+
+
+<div class="layui-footer">
+    <% include("../layout/footer.html"){} %>
+</div>
+
+</body>
+<script type="text/javascript" src="${ctxPath }/assets/libs/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/q.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/zTree/js/jquery.ztree.all-3.5.min.js"></script>
+<script>
+    layui.config({
+        base: '${ctxPath}/module/'
+    }).extend({
+        formSelects: 'formSelects/formSelects-v4',
+        treetable: 'treetable-lay/treetable'
+    }).use(['admin'], function () {
+        var admin = layui.admin;
+
+    });
+
+    layui.use('carousel', function(){
+        var carousel = layui.carousel;
+        var i = 0;
+        var ins;
+        // var width = $(".pic")[i].width * 2.28; //获取宽度
+        var width = $("#layui-nav").width; //获取宽度
+        var height = $(".pic")[i].height * 1.4; //获取高度
+        console.log("宽度：", width);
+
+        //建造实例
+        ins = carousel.render({
+            elem: '#layui-carousel',
+            width: width, //设置容器宽度
+            height: height,
+            arrow: 'hover', //始终显示箭头
+            anim: 'default', //切换动画方式
+            autoplay: false
+        });
+        carousel.on('change(carofilter)', function(obj){ //监听轮播
+            i = obj.index;
+            width = $(".img")[i].width;
+            height = $(".img")[i].height;
+            ins.reload({ //重置轮播
+                elem: '#carousel',
+                width: width, //设置容器宽度
+                height: height,
+                arrow: 'hover', //始终显示箭头
+                anim: 'default', //切换动画方式
+                autoplay: false
+            });
+        });
+    });
+</script>
+</html>

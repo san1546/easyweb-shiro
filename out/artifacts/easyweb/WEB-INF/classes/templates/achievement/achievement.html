@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" class="html">
+<head>
+    <meta charset="UTF-8">
+    <title>华文水平测试成绩查询</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="${ctxPath }/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="${ctxPath }/assets/libs/zTree/css/zTreeStyle/zTreeStyle.css"/>
+    <link rel="stylesheet" href="${ctxPath }/module/formSelects/formSelects-v4.css"/>
+    <link rel="stylesheet" href="${ctxPath }/assets/css/achieve.css"/>
+    <link rel="stylesheet" href="${ctxPath }/assets/css/admin.css"/>
+    <% if(null!=session.theme){ %>
+    <link rel="stylesheet" href="${ctxPath }/assets/css/theme-${session.theme}.css"/> <!-- 使用EasyWeb主题生成器生成的主题 -->
+    <% } %>
+</head>
+<body>
+<div class="layui-layout">
+    <% include("../layout/nav_header.html"){} %>
+<!--    <hr class="layui-bg-hw layui-hr">-->
+    <div class="layui-card-body" style="top:5em">
+        <h1 style="text-align: center;color: #8b0015;font-weight: bold">华文水平测试成绩查询</h1>
+        <div id="achieve-form-div" class="achieve-form-div">
+            <div class="layui-form-item">
+                <form id="achieve-form" lay-filter="achieve-form" class="layui-form model-form">
+                    <input type="hidden" name="data_test" id="data_test"/>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">准考证号：</label>
+                        <div class="layui-input-block">
+                            <input name="testno" placeholder="准考证号" type="text" class="layui-input" width="60%"
+                                    lay-verify="number"/>
+                        </div>
+                    </div>
+<!--                    <div class="layui-form-item">-->
+<!--                        <label class="layui-form-label">护照号：</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input name="idno" placeholder="可以填写身份证号或者护照号" type="text" class="layui-input" width="60%"-->
+<!--                                   />-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">姓名：</label>
+                        <div class="layui-input-block">
+                            <input name="name" placeholder="姓名" type="text" class="layui-input" width="20%"
+                                   lay-verify="otherReq" required />
+                        </div>
+                    </div>
+                    <div class="layui-form-item model-form-footer">
+                        <button class="layui-btn layui-btn-radius layui-btn-lg layui-bg-hw" lay-filter="achieve-form-submit" lay-submit> 查询
+                        </button>
+                        <button class="layui-btn layui-btn-primary layui-btn-radius layui-btn-lg" type="button">取消
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div class="layui-footer">
+    <% include("../layout/footer.html"){} %>
+</div>
+</body>
+<script type="text/javascript" src="${ctxPath }/assets/libs/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/q.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="${ctxPath }/assets/libs/zTree/js/jquery.ztree.all-3.5.min.js"></script>
+<script>
+    layui.config({
+        base: '${ctxPath}/module/'
+    }).extend({
+        formSelects: 'formSelects/formSelects-v4',
+        treetable: 'treetable-lay/treetable'
+    }).use(['admin'], function () {
+        var admin = layui.admin;
+
+    });
+</script>
+<script type="text/javascript">
+    layui.use(['form','table','layer'], function (obj) {
+        var form = layui.form;
+        var layer = layui.layer;
+        // 添加表单验证方法
+        //监听提交
+        form.on('submit(achieve-form-submit)', function(data){
+            var testno = data.field.testno;
+            var idno = data.field.idno;
+            if(!testno && !idno){
+                layer.msg("请填写身份证号（护照号）或者准考证号任意一项");
+                return false;
+            }
+            layer.load(2);
+            var url = "/achievement/list";
+            $.post(url, data.field, function (data) {
+                layer.closeAll('loading');
+                if(data.code==200){
+                    var testno = data.object.testno;
+                    $('#data_test').val(testno);
+                    layer.open({
+                        type: 2,
+                        area: ['100%', '100%'],
+                        fixed: false, //不固定
+                        // maxmin: true,
+                        content: '${ctxPath }/totalpdf/'+data.object.testno+'.pdf'
+                        // content: "/achievement/download?testno="+data.object.testno
+                        ,btn: ['下载PDF', '全部关闭'] //只是为了演示
+                        ,yes: function(index,layero){
+                            // var body = top.layer.getChildFrame('body', index);
+                            var testno = parent.layui.$('#data_test').val();
+                            var downloadURL = "/achievement/download?testno="+testno;
+                            window.open(downloadURL);
+                        }
+                        ,btn2: function(){
+                            layer.closeAll();
+                        }
+                    });
+                    // var url1 = "/achievement/download?testno="+data.object.testno;
+                    // $.post(url1, function (data) {})
+                }else{
+                    layer.msg("查不到相关信息");
+                    return false;
+                }
+                $("#achieve-form")[0].reset();
+                layui.form.render();
+            });
+            return false;
+        });
+
+
+        form.verify({
+             otherReq: function(value,item) {
+                 var $ = layui.$;
+                 var verifyName = $(item).attr('name')
+                     , verifyType = $(item).attr('type')
+                     , formElem = $(item).parents('.layui-form')//获取当前所在的form元素，如果存在的话
+                     , verifyElem = formElem.find('input[name=' + verifyName + ']')//获取需要校验的元素
+                     , focusElem = verifyElem.next().find('i.layui-icon');//焦点元素
+                 if (!value) {
+                     //定位焦点
+                     focusElem.css(verifyType == 'text' ? {"color": "#FF5722"} : {"border-color": "#FF5722"});
+                     //对非输入框设置焦点
+                     focusElem.first().attr("tabIndex", "1").css("outline", "0").blur(function () {
+                         focusElem.css(verifyType == 'text' ? {"color": ""} : {"border-color": ""});
+                     }).focus();
+                     return '姓名不能为空';
+                 }
+             }
+        });
+
+
+    });
+
+</script>
+
+</html>

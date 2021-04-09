@@ -1,0 +1,233 @@
+<!-- user表单弹窗 -->
+<form id="user-form" lay-filter="user-form" class="layui-form model-form">
+    <div class="layui-upload">
+        <br/>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 25%; min-width: 20px" >每大题内的小题数：</label>
+            <div class="layui-input-block">
+                <input name="testnum" placeholder="请输入每个大题需要多少个小题" type="text"  class="layui-input no_empty" maxlength="20" onBlur="no_empty()" onFocus="no_empty()"  minlength="10" style="width:60%"
+                    lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 25%; min-width: 20px" >每大题内的小题分数：</label>
+            <div class="layui-input-block">
+                <input name="score" placeholder="请输入每个大题中每小题的分数" type="text"  class="layui-input no_empty" maxlength="20" onBlur="no_empty()" onFocus="no_empty()"  minlength="10" style="width:60%"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 25%; min-width: 20px" >试卷号：</label>
+            <div class="layui-input-block">
+                <input name="testno" placeholder="请输入试卷号" type="text"  class="layui-input no_empty" maxlength="20" onBlur="no_empty()" onFocus="no_empty()"  minlength="10" style="width:60%"
+                       lay-verify="required" required/>
+            </div>
+        </div>
+        <button type="button" class="layui-btn layui-btn-danger layui-btn-disabled layui-btn-radius" id="download" disabled style="margin-left:1%"
+                lay-tips="请先填写多少小题为一大题再下载模板"
+                lay-direction="#f99501"
+        >模板下载</button>
+        <button type="button" class="layui-btn layui-btn-normal layui-btn-disabled layui-btn-radius" id="testList" disabled
+                lay-tips="请先填写多少小题为一大题再上传"
+                lay-direction="#f99501"
+        >选择多文件</button>
+        <div class="layui-upload-list">
+            <table class="layui-table">
+                <thead>
+                <tr><th>文件名</th>
+                    <th>大小</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr></thead>
+                <tbody id="demoList"></tbody>
+            </table>
+        </div>
+        <button type="button" class="layui-btn layui-btn-disabled layui-btn-radius" id="testListAction" lay-filter="user-form-submit"
+                lay-tips="请先填写多少小题为一大题再上传"
+                lay-direction="#f99501"  layui-btn-disabled style="margin-left: 1%;"
+        >开始上传</button>
+    </div>
+</form>
+<script>
+    function no_empty(){
+
+        let status ='';//函数返回的状态，0代表是是空，1不是空
+        let val = '';//存历遍的input的输入内容
+        let arr=[];//存历遍后，且为空的input标签对象
+        $('.no_empty').each(function(key,value){
+            val = $(value).val();
+            if(val===''){
+                arr.push($(value));//把抓到内容为空的input存入arr数组中
+                let target =arr[0];//始终抓取第一个为空的input标签，并写入下面的弹层参数中
+                layer.tips(
+                    '不能为空',
+                    target, {
+                        // tipsMore: true,
+                        anim:6,
+                        time:1500,
+                        tips: [1, '#f99501'] //还可配置颜色
+                        ,end:function () {
+                        }
+                    });
+                status= 0;
+            }else{
+                status= 1;
+
+            }
+
+        });
+
+        return status
+
+    }
+
+    $(function(){
+        //输入框的值改变时触发
+        $("#download").click(function(e){
+            layer.load(2);
+            var data = "upload_score.xlsx";
+            var url = "/system/data/download?filename="+data;
+            window.open(url);
+            layer.closeAll('loading');
+            return false;
+        });
+    });
+
+    $(function(){
+        //输入框的值改变时触发
+        $(".no_empty").on("input",function(e){
+            let status ='';//函数返回的状态，0代表是是空，1不是空
+            let val = '';//存历遍的input的输入内容
+            let arr=[];//存历遍后，且为空的input标签对象
+            $('.no_empty').each(function(key,value){
+                val = $(value).val();
+                if(val===''){
+                    arr.push($(value));//把抓到内容为空的input存入arr数组中
+                    let target =arr[0];//始终抓取第一个为空的input标签，并写入下面的弹层参数中
+                    target.focus();
+                    layer.tips(
+                        '不能为空',
+                        target, {
+                            // tipsMore: true,
+                            anim:6,
+                            time:1500,
+                            tips: [1, '#f99501'] //还可配置颜色
+                            // ,before:function () {
+                            //     $(value).focus();
+                            // }
+                        });
+                    status= 0;
+                    $("#testList").addClass("layui-btn-disabled").attr("disabled",true);
+                    $("#testListAction").addClass("layui-btn-disabled").attr("disabled",true);
+                    $("#download").addClass("layui-btn-disabled").attr("disabled",true);
+                }else{
+                    status= 1;
+                    $("#testList").removeClass("layui-btn-disabled").removeAttr("disabled");
+                    $("#testListAction").removeClass("layui-btn-disabled").removeAttr("disabled");
+                    $("#download").removeClass("layui-btn-disabled").removeAttr("disabled");
+                }
+            });
+            return status
+        });
+    });
+
+
+    layui.use(['form', 'upload'], function() {
+        var form = layui.form;
+        var tanchu;
+        var num = 0;
+        var total = 0;
+        var $ = layui.jquery
+            ,upload = layui.upload;
+        // form.on('submit(user-form-submit)', function (data) {
+        //多文件列表示例
+        var demoListView = $('#demoList')
+            , uploadListIns = upload.render({
+            elem: '#testList'
+            , url: 'system/data/uploadScore/'
+            , accept: 'file'
+            , exts: 'xls|xlsx'
+            , multiple: true
+            , auto: false
+            , bindAction: '#testListAction'
+            , choose: function (obj) {
+                var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                //读取本地文件
+                obj.preview(function (index, file, result) {
+                    num = num +1;
+                    var tr = $(['<tr id="upload-' + index + '">'
+                        , '<td>' + file.name + '</td>'
+                        , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
+                        , '<td>等待上传</td>'
+                        , '<td>'
+                        , '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                        , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+
+                    //单个重传
+                    tr.find('.demo-reload').on('click', function () {
+                        obj.upload(index, file);
+                    });
+
+                    //删除
+                    tr.find('.demo-delete').on('click', function () {
+                        delete files[index]; //删除对应的文件
+                        tr.remove();
+                        uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                    });
+
+                    demoListView.append(tr);
+                });
+            }
+            , before: function () {
+                var testnum =  $('input[name="testnum"]').val();
+                var score =  $('input[name="score"]').val();
+                var testno =  $('input[name="testno"]').val();
+
+                if(testnum!=null && score!=null && testno!=null){
+                    this.data = {
+                        testnum: testnum,
+                        score: score,
+                        testno: testno
+                    }
+                }
+
+                tanchu = top.layer.msg('正在上传，请勿进行其他操作...',{
+                    icon: 16,
+                    shade: 0.8,
+                    time: 0
+                });
+            }
+            , done: function (res, index, upload) {
+                if (res.code == 200) { //上传成功
+                    total = total + 1;
+                    if(total==num){
+                        parent.layer.close(tanchu);
+                        total = 0;
+                        num = 0;
+                    }
+                    var tr = demoListView.find('tr#upload-' + index)
+                        , tds = tr.children();
+                    tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                    tds.eq(3).html(''); //清空操作
+                    return delete this.files[index]; //删除文件队列已经上传成功的文件
+                }
+                this.error(index, upload);
+            }
+            , error: function (index, upload) {
+                var tr = demoListView.find('tr#upload-' + index)
+                    , tds = tr.children();
+                tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                parent.layer.close(tanchu);
+                total = 0;
+                num = 0;
+            }
+            , success: function (res) {
+                layer.closeAll('loading');
+            }
+        });
+        // });
+    });
+</script>

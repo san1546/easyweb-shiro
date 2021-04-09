@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.hyh.system.dao.DataDetailMapper">
+
+    <select id="getByUsername" resultType="com.hc.hyh.system.model.DataDetailInfo">
+        select * from sys_user where username=#{username}
+    </select>
+
+    <select id="getList" resultType="com.hc.hyh.system.model.DataDetailInfo">
+        select * from data_info_detail where testno=#{testno} and part=#{part} and title=#{title} and score =#{score}
+    </select>
+
+
+    <select id="getCount"   resultType="Integer" >
+        select count(*) from data_info_detail where testno=#{testno} and part=#{part} and title=#{title} and score =#{score}
+    </select>
+
+
+
+    <!-- separator="," 字段以逗号分割 -->
+
+    <insert id="insertDetailBatch" parameterType="list">
+        insert into data_info_detail
+            (student_name, testno,part,score,title,flag,create_time,update_time)
+        values
+        <foreach collection="list" item="dept" index="index" separator=",">
+            (#{dept.studentName,jdbcType=VARCHAR}, #{dept.testno,jdbcType=VARCHAR},
+            #{dept.part,jdbcType=VARCHAR},#{dept.score,jdbcType=VARCHAR},#{dept.title,jdbcType=VARCHAR},#{dept.flag,jdbcType=VARCHAR}
+            ,#{dept.createTime,jdbcType=VARCHAR},#{dept.updateTime,jdbcType=VARCHAR}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        student_name = values(student_name),
+        testno = values(testno),
+        part = values(part),
+        score = values(score),
+        title = values(title),
+        flag = values(flag),
+        create_time = values(create_time),
+        update_time = values(update_time)
+    </insert>
+
+
+    <update id="updateDetailBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update data_info_detail
+            <set>
+                student_name = #{item.studentName},
+                testno = #{item.testno},
+                part = #{item.part},
+                score = #{item.score},
+                title = #{item.title},
+                flag = #{item.flag},
+            </set>
+            where
+            flag = #{item.flag}
+        </foreach>
+    </update>
+</mapper>

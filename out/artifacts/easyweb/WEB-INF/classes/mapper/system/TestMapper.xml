@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.hyh.system.dao.TestMapper">
+
+    <select id="getByTestNo" resultType="com.hc.hyh.system.model.TestInfo">
+        select * from test_info where testno=#{testno} and part=#{part}
+    </select>
+    <select id="getList" resultType="com.hc.hyh.system.model.TestInfo">
+        select * from test_info where testno=#{testno} order by flag desc
+    </select>
+
+    <insert id="insertTestBatch" parameterType="list">
+        insert into test_info
+        (flag, testno,part_answer,part_num,part,part_score)
+        values
+        <foreach collection="list" item="dept" index="index" separator=",">
+            (#{dept.flag,jdbcType=VARCHAR}, #{dept.testno,jdbcType=VARCHAR},
+            #{dept.partAnswer,jdbcType=VARCHAR},#{dept.partNum,jdbcType=VARCHAR},#{dept.part,jdbcType=VARCHAR},#{dept.partScore,jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        flag = values(flag),
+        testno = values(testno),
+        part_answer = values(part_answer),
+        part_num = values(part_num),
+        part = values(part),
+        part_score = values(part_score)
+    </insert>
+
+
+</mapper>

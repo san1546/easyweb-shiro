@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.hyh.system.dao.TestDetailMapper">
+
+    <select id="getByTestNo" resultType="com.hc.hyh.system.model.TestDetailInfo">
+        select * from test_info_detail where testno=#{testno} and title=#{title}
+    </select>
+
+    <!-- separator="," 字段以逗号分割 -->
+
+    <insert id="insertTestDetailBatch" parameterType="list">
+        insert into test_info_detail
+        (testno,title,correct_average,error_average,correct_percentage,error_percentage,percentage_product_square,total_standard_deviation,point_biserial,difficulty,flag)
+        values
+        <foreach collection="list" item="dept" index="index" separator=",">
+            (
+            #{dept.testno,jdbcType=VARCHAR},#{dept.title,jdbcType=VARCHAR},#{dept.correctAverage,jdbcType=VARCHAR}
+            ,#{dept.errorAverage,jdbcType=VARCHAR},#{dept.correctPercentage,jdbcType=VARCHAR}
+            ,#{dept.errorPercentage,jdbcType=VARCHAR},#{dept.percentageProductSquare,jdbcType=VARCHAR}
+            ,#{dept.totalStandardDeviation,jdbcType=VARCHAR},#{dept.pointBiserial,jdbcType=VARCHAR}
+            ,#{dept.difficulty,jdbcType=VARCHAR},#{dept.flag,jdbcType=VARCHAR}
+            )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        testno = values(testno),
+        title = values(title),
+        correct_average = values(correct_average),
+        error_average = values(error_average),
+        correct_percentage = values(correct_percentage),
+        error_percentage = values(error_percentage),
+        percentage_product_square = values(percentage_product_square),
+        total_standard_deviation = values(total_standard_deviation),
+        point_biserial = values(point_biserial),
+        difficulty = values(difficulty),
+        flag = values(flag)
+    </insert>
+
+
+    <update id="updateTestDetailBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update test_info_detail
+            <set>
+                testno = #{testno},
+                title = #{title},
+                correct_average = #{correct_average},
+                error_average = #{error_average},
+                correct_percentage = #{correct_percentage},
+                error_percentage = #{error_percentage},
+                percentage_product_square = #{percentage_product_square},
+                total_standard_deviation = #{total_standard_deviation},
+                point_biserial = #{point_biserial},
+                difficulty = #{difficulty},
+                flag = #{flag}
+            </set>
+            where
+            flag = #{item.flag}
+        </foreach>
+    </update>
+</mapper>

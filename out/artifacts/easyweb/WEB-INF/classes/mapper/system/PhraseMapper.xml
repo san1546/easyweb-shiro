@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.hyh.system.dao.PhraseMapper">
+
+    <select id="getID" resultType="com.hc.hyh.system.model.PhraseInfo">
+        select * from phrase_level where id=#{id}
+    </select>
+
+    <select id="getList"   resultType="com.hc.hyh.system.model.PhraseInfo" parameterType="list" >
+        select
+        *
+        from data_info
+        WHERE student_name in
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+              #{item}
+            </foreach>
+    </select>
+
+    <insert id="insertPhraseBatch" useGeneratedKeys="true" keyProperty="id" parameterType="list">
+        insert into
+        phrase_level (id,phrase_detail_level_1, phrase_detail_level_2,phrase_detail_level_3,phrase_detail_level_4,phrase_detail_level_5,phrase_detail_level_6,
+        phrase_detail_level_7,phrase_detail_level_8,phrase_detail_level_9,phrase_detail_level_10,phrase_detail_total_level_1,phrase_detail_total_level_2,
+        phrase_detail_total_level_3,phrase_detail_total_level_4,phrase_detail_total_level_5,phrase_detail_total_level_6,phrase_detail_total_level_7,
+        phrase_detail_total_level_8,phrase_detail_total_level_9,phrase_detail_total_level_10)
+        values
+        <foreach collection="list" item="dept" index="index" separator=",">
+            (#{dept.id,jdbcType=VARCHAR}, #{dept.phraseDetailLevel_1,jdbcType=VARCHAR}, #{dept.phraseDetailLevel_2,jdbcType=VARCHAR},
+            #{dept.phraseDetailLevel_3,jdbcType=VARCHAR},#{dept.phraseDetailLevel_4,jdbcType=VARCHAR},#{dept.phraseDetailLevel_5,jdbcType=VARCHAR},
+            #{dept.phraseDetailLevel_6,jdbcType=VARCHAR},#{dept.phraseDetailLevel_7,jdbcType=VARCHAR},#{dept.phraseDetailLevel_8,jdbcType=VARCHAR},
+            #{dept.phraseDetailLevel_9,jdbcType=VARCHAR},#{dept.phraseDetailLevel_10,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_1,jdbcType=VARCHAR},
+            #{dept.phraseDetailTotalLevel_2,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_3,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_4,jdbcType=VARCHAR},
+            #{dept.phraseDetailTotalLevel_5,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_6,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_7,jdbcType=VARCHAR},
+            #{dept.phraseDetailTotalLevel_8,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_9,jdbcType=VARCHAR},#{dept.phraseDetailTotalLevel_10,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" separator=";">
+        update data_info
+            <set>
+                student_name = #{item.studentName},
+                testno = #{item.testno},
+                part = #{item.part},
+                part_num = #{item.partNum},
+                answer = #{item.answer},
+                part_score = #{item.partScore}
+            </set>
+            where id = #{item.id}
+        </foreach>
+
+    </update>
+</mapper>

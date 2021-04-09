@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.hyh.system.dao.CorpusMapper">
+
+
+    <select id="getName" resultType="com.hc.hyh.system.model.CorpusInfo">
+        select * from data_info where student_name=#{studentName}
+    </select>
+
+    <select id="getList"   resultType="com.hc.hyh.system.model.CorpusInfo" parameterType="list" >
+        select
+        *
+        from data_info
+        WHERE student_name in
+            <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+              #{item}
+            </foreach>
+    </select>
+
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="id" parameterType="list">
+        insert into
+        chinese_corpus (corpus_detail, word_level_id, phrase_level_id)
+        values
+        <foreach collection="list" item="dept" index="index" separator=",">
+            (#{dept.corpusDetail,jdbcType=VARCHAR}, #{dept.wordLevelId,jdbcType=INTEGER}, #{dept.phraseLevelId,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <update id="updateBatch" parameterType="list">
+        <foreach collection="list" item="item" index="index" separator=";">
+        update data_info
+            <set>
+                student_name = #{item.studentName},
+                testno = #{item.testno},
+                part = #{item.part},
+                part_num = #{item.partNum},
+                answer = #{item.answer},
+                part_score = #{item.partScore}
+            </set>
+            where id = #{item.id}
+        </foreach>
+
+    </update>
+</mapper>
