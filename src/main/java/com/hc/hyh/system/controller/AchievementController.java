@@ -2,6 +2,7 @@ package com.hc.hyh.system.controller;
 
 import com.hc.hyh.common.BaseController;
 import com.hc.hyh.common.JsonResult;
+import com.hc.hyh.common.utils.BtoaEncode;
 import com.hc.hyh.system.model.Achieve;
 import com.hc.hyh.system.service.AchieveService;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,14 @@ public class AchievementController extends BaseController {
         } else {
             return JsonResult.error("请填写身份证号（护照号）或者准考证号任意一项");
         }
+    }
+
+    @RequestMapping("/testnoview")
+    public String testnoView(String testno, String name){
+        System.out.println("testno11:" + testno);
+        System.out.println("name11:" + BtoaEncode.decrypt(name));
+        name = BtoaEncode.decrypt(name);
+        return "/totalpdf/" + testno + name + ".pdf";
     }
 
     @RequestMapping("/download")

@@ -23,9 +23,11 @@ public class ShiroConfig {
         ShiroFilterFactoryBean shiroFilter = new ShiroFilterFactoryBean();
         shiroFilter.setSecurityManager(securityManager);
         // 登录配置
-        shiroFilter.setLoginUrl("/login");
+//        shiroFilter.setLoginUrl("/login");
+        shiroFilter.setLoginUrl("/");
         shiroFilter.setSuccessUrl("/");
-        shiroFilter.setUnauthorizedUrl("/error?code=403");
+//        shiroFilter.setUnauthorizedUrl("/error?code=403");
+        shiroFilter.setUnauthorizedUrl("/");
         // 自定义过滤器
         Map<String, Filter> filtersMap = new LinkedHashMap<String, Filter>();
         filtersMap.put("myLoginFilter", new MyLoginFilter());
