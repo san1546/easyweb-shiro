@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 
@@ -57,6 +58,7 @@ public class AchievementController extends BaseController {
         }
         System.out.println("idno:" + achieve.getIdno());
         System.out.println("testno:" + achieve.getTestno());
+        System.out.println("name:" + achieve.getName());
 //        if(!achieve.getIdno().equals("")){
 //           String idno = achieve.getIdno();
 //           String name = achieve.getName();
@@ -83,16 +85,18 @@ public class AchievementController extends BaseController {
 
     @RequestMapping("/testnoview")
     public String testnoView(String testno, String name){
-        System.out.println("testno11:" + testno);
-        System.out.println("name11:" + BtoaEncode.decrypt(name));
+        System.out.println("name1:" + name);
+//        name = URLDecoder.decode(name,"utf-8");
         name = BtoaEncode.decrypt(name);
+        System.out.println("testno11:" + testno);
+        System.out.println("name11:" + name);
         return "/totalpdf/" + testno + name + ".pdf";
     }
 
     @RequestMapping("/download")
-    public void download(String testno, HttpServletResponse response, HttpServletRequest request) throws IOException {
+    public void download(String testno, String name, HttpServletResponse response, HttpServletRequest request) throws IOException {
         response.setContentType("application/force-download");
-        String path = this.getClass().getClassLoader().getResource("/static//totalpdf/" + testno + ".pdf").getPath();
+        String path = this.getClass().getClassLoader().getResource("/static//totalpdf/" + testno + name + ".pdf").getPath();
         File file = new File(path);
         String fileName = file.getName();
         String ext = fileName.substring(fileName.lastIndexOf(".") + 1);

@@ -90,6 +90,7 @@
     function encryption(str){
         var encStr = encodeURIComponent(str);
         encStr = btoa(encStr);
+        // var encStr = encodeURI(str);
         return encStr;
     }
     layui.use(['form','table','layer'], function (obj) {
@@ -124,7 +125,7 @@
                         ,yes: function(index,layero){
                             // var body = top.layer.getChildFrame('body', index);
                             var testno = parent.layui.$('#data_test').val();
-                            var downloadURL = "/achievement/download?testno="+testno;
+                            var downloadURL = "/achievement/download?testno=" + testno + "&name=" + encryption(name);
                             window.open(downloadURL);
                         }
                         ,btn2: function(){
